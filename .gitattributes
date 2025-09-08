@@ -1,2 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Ensure executable permissions for binaries
+*.sh eol=lf
+node_modules/.bin/* eol=lf

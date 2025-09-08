@@ -1,0 +1,31 @@
+[
+  {
+    "id": "D-101",
+    "name": "General Petition - Rajesh Kumar.pdf",
+    "size": 120345,
+    "tags": [
+      "petition",
+      "civil"
+    ]
+  },
+  {
+    "id": "D-102",
+    "name": "Registered Title Deed - Meena Devi.jpg",
+    "size": 54321,
+    "tags": [
+      "deed",
+      "property",
+      "title"
+    ]
+  },
+  {
+    "id": "D-103",
+    "name": "Matrimonial Petition - Anita Sharma.pdf",
+    "size": 89340,
+    "tags": [
+      "petition",
+      "family",
+      "divorce"
+    ]
+  }
+]

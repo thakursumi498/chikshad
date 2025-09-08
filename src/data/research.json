@@ -1,0 +1,23 @@
+[
+  {
+    "id": 101,
+    "title": "Rajesh Kumar vs State of Tamil Nadu",
+    "court": "Supreme Court of India",
+    "year": 2010,
+    "snippet": "Landmark judgment clarifying property rights under the Transfer of Property Act, with emphasis on title priority."
+  },
+  {
+    "id": 102,
+    "title": "Meena Devi vs Bihar State Electricity Board",
+    "court": "Patna High Court",
+    "year": 2015,
+    "snippet": "Important ruling on negligence and the duty of care by public utility authorities."
+  },
+  {
+    "id": 103,
+    "title": "Anita Sharma vs Rakesh Sharma",
+    "court": "Delhi High Court",
+    "year": 2018,
+    "snippet": "Judgment dealing with maintenance rights of a wife under Section 125 CrPC and equitable relief in matrimonial disputes."
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "id": "C-2001",
+    "title": "Rajesh Kumar vs State of Tamil Nadu",
+    "stage": "Trial",
+    "risk": "Medium",
+    "court": "Madras High Court",
+    "next_hearing": "2025-09-10",
+    "summary": "Dispute regarding agricultural land ownership under Tamil Nadu Land Reforms Act."
+  },
+  {
+    "id": "C-2002",
+    "title": "Meena Devi vs Suresh Kumar",
+    "stage": "Appeal",
+    "risk": "High",
+    "court": "Delhi High Court",
+    "next_hearing": "2025-09-12",
+    "summary": "Appeal filed over ancestral property partition and revenue records mismatch."
+  },
+  {
+    "id": "C-2003",
+    "title": "Anita Sharma vs Rakesh Sharma",
+    "stage": "Motion",
+    "risk": "Low",
+    "court": "Family Court, Jaipur",
+    "next_hearing": "2025-09-20",
+    "summary": "Matrimonial dispute involving divorce petition and claim for maintenance under Section 125 CrPC."
+  }
+]

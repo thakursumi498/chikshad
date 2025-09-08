@@ -1,0 +1,21 @@
+[
+  {
+    "id": "CL-101",
+    "name": "Rajesh Kumar",
+    "phone": "+91-9876543210",
+    "email": "rajesh.kumar@example.com",
+    "cases": [
+      "C-2001"
+    ]
+  },
+  {
+    "id": "CL-102",
+    "name": "Meena Devi",
+    "phone": "+91-9811122233",
+    "email": "meena.devi@example.com",
+    "cases": [
+      "C-2002",
+      "C-2003"
+    ]
+  }
+]
