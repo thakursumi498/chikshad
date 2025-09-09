@@ -13,10 +13,10 @@ export default function Simulation() {
 
   // Sample data for different argument styles
   const argumentStyles = [
-    { id: 'persuasive', name: 'Persuasive', description: 'Appeal to logic and emotion with balanced rhetoric' },
-    { id: 'calm', name: 'Calm & Measured', description: 'Fact-based, methodical approach with neutral tone' },
-    { id: 'aggressive', name: 'Aggressive', description: 'Confrontational style with strong challenges' },
-    { id: 'narrative', name: 'Narrative', description: 'Storytelling approach to frame your case' }
+    { id: 'persuasive', name: 'Persuasive', description: 'Appeal to logic and emotion with balanced rhetoric', icon: '💬' },
+    { id: 'calm', name: 'Calm & Measured', description: 'Fact-based, methodical approach with neutral tone', icon: '📊' },
+    { id: 'aggressive', name: 'Aggressive', description: 'Confrontational style with strong challenges', icon: '⚡' },
+    { id: 'narrative', name: 'Narrative', description: 'Storytelling approach to frame your case', icon: '📖' }
   ];
 
   // Sample witness responses
@@ -91,7 +91,8 @@ export default function Simulation() {
       id: questions.length + 1,
       text: currentQuestion,
       response: response,
-      style: randomStyle
+      style: randomStyle,
+      timestamp: new Date().toLocaleTimeString()
     };
     
     setQuestions([...questions, newQuestion]);
@@ -110,7 +111,9 @@ export default function Simulation() {
           "Trial - Estimated 3-5 days",
           "Verdict - Jury deliberation 1-2 days"
         ],
-        successProbability: "65%"
+        successProbability: "65%",
+        duration: "6-9 months",
+        color: "blue"
       },
       {
         title: "Expedited Timeline",
@@ -121,7 +124,9 @@ export default function Simulation() {
           "Settlement conference - Ordered",
           "Possible resolution in 60 days"
         ],
-        successProbability: "45%"
+        successProbability: "45%",
+        duration: "2-3 months",
+        color: "purple"
       },
       {
         title: "Appeal Scenario",
@@ -132,7 +137,9 @@ export default function Simulation() {
           "Oral arguments - Scheduled",
           "Appellate decision - 6-12 months"
         ],
-        successProbability: "30%"
+        successProbability: "30%",
+        duration: "12-18 months",
+        color: "amber"
       }
     ];
     
@@ -164,79 +171,101 @@ export default function Simulation() {
     });
   };
 
+  // Function to clear conversation
+  const clearConversation = () => {
+    setQuestions([]);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">🏛️ Courtroom Simulation</h2>
-        <p className="text-gray-600 mb-6">Practice arguments, cross-examination, and explore different case outcomes</p>
+        <header className="mb-8 p-4 bg-white rounded-xl shadow-sm">
+          <h1 className="text-3xl font-bold text-slate-800 mb-2 flex items-center">
+            <span className="mr-3">🏛️</span> Courtroom Simulation Platform
+          </h1>
+          <p className="text-slate-600">Practice arguments, cross-examination, and explore different case outcomes with AI assistance</p>
+        </header>
         
         {/* Navigation Tabs */}
-        <div className="flex border-b border-gray-200 mb-6">
+        <div className="flex overflow-x-auto mb-8 bg-white rounded-xl shadow-sm p-1">
           <button
-            className={`py-2 px-4 font-medium ${activeTab === 'arguments' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
+            className={`flex items-center py-3 px-6 font-medium rounded-lg transition-all ${activeTab === 'arguments' ? 'bg-blue-100 text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
             onClick={() => setActiveTab('arguments')}
           >
-            Argument Simulation
+            <span className="mr-2">💬</span> Argument Simulation
           </button>
           <button
-            className={`py-2 px-4 font-medium ${activeTab === 'cross-exam' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
+            className={`flex items-center py-3 px-6 font-medium rounded-lg transition-all ${activeTab === 'cross-exam' ? 'bg-blue-100 text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
             onClick={() => setActiveTab('cross-exam')}
           >
-            Cross-Examination
+            <span className="mr-2">⚖️</span> Cross-Examination
           </button>
           <button
-            className={`py-2 px-4 font-medium ${activeTab === 'timelines' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
+            className={`flex items-center py-3 px-6 font-medium rounded-lg transition-all ${activeTab === 'timelines' ? 'bg-blue-100 text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
             onClick={() => setActiveTab('timelines')}
           >
-            Timeline Outcomes
+            <span className="mr-2">📅</span> Timeline Outcomes
           </button>
           <button
-            className={`py-2 px-4 font-medium ${activeTab === 'feedback' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
+            className={`flex items-center py-3 px-6 font-medium rounded-lg transition-all ${activeTab === 'feedback' ? 'bg-blue-100 text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
             onClick={() => setActiveTab('feedback')}
           >
-            AI Feedback
+            <span className="mr-2">📊</span> AI Feedback
           </button>
         </div>
         
         {/* Argument Simulation Tab */}
         {activeTab === 'arguments' && (
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Mock Argument Generation</h3>
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-semibold text-slate-800">Mock Argument Generation</h3>
+              <div className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                Selected: {argumentStyles.find(s => s.id === selectedStyle)?.name}
+              </div>
+            </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               {argumentStyles.map(style => (
                 <div 
                   key={style.id}
-                  className={`p-4 rounded-lg border cursor-pointer transition-all ${
-                    selectedStyle === style.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'
+                  className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                    selectedStyle === style.id 
+                      ? 'border-blue-500 bg-blue-50 shadow-md' 
+                      : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                   onClick={() => setSelectedStyle(style.id)}
                 >
-                  <h4 className="font-medium text-gray-800">{style.name}</h4>
-                  <p className="text-sm text-gray-600 mt-1">{style.description}</p>
+                  <div className="flex items-center mb-2">
+                    <span className="text-2xl mr-2">{style.icon}</span>
+                    <h4 className="font-semibold text-slate-800">{style.name}</h4>
+                  </div>
+                  <p className="text-sm text-slate-600">{style.description}</p>
                 </div>
               ))}
             </div>
             
-            <div className="mb-4">
+            <div className="mb-6">
               <button 
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-md flex items-center"
                 onClick={generateArgument}
               >
-                Generate Argument
+                <span className="mr-2">✨</span> Generate Argument
               </button>
             </div>
             
-            <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 min-h-[150px]">
-              <p className="text-gray-800">{argumentText || "Your generated argument will appear here..."}</p>
+            <div className="border-2 border-slate-200 rounded-xl p-6 bg-slate-50 min-h-[200px] mb-6">
+              <p className="text-slate-800 leading-relaxed">{argumentText || "Your generated argument will appear here. Select a style and click 'Generate Argument' to begin."}</p>
             </div>
             
-            <div className="mt-4 flex space-x-3">
-              <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                Save Argument
+            <div className="flex space-x-4">
+              <button className="px-5 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors shadow-sm flex items-center">
+                <span className="mr-2">💾</span> Save Argument
               </button>
-              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                Practice Delivery
+              <button className="px-5 py-2.5 bg-violet-600 text-white rounded-xl hover:bg-violet-700 transition-colors shadow-sm flex items-center">
+                <span className="mr-2">🎤</span> Practice Delivery
+              </button>
+              <button className="px-5 py-2.5 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 transition-colors shadow-sm flex items-center">
+                <span className="mr-2">📋</span> Copy to Clipboard
               </button>
             </div>
           </div>
@@ -244,53 +273,68 @@ export default function Simulation() {
         
         {/* Cross-Examination Tab */}
         {activeTab === 'cross-exam' && (
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">AI Witness Cross-Examination</h3>
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-semibold text-slate-800">AI Witness Cross-Examination</h3>
+              {questions.length > 0 && (
+                <button 
+                  onClick={clearConversation}
+                  className="text-sm text-slate-500 hover:text-red-500 transition-colors flex items-center"
+                >
+                  <span className="mr-1">🔄</span> Clear Conversation
+                </button>
+              )}
+            </div>
             
-            <div className="flex mb-6">
+            <div className="flex mb-6 shadow-sm">
               <input
                 type="text"
                 value={currentQuestion}
                 onChange={(e) => setCurrentQuestion(e.target.value)}
                 placeholder="Type your question for the witness..."
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-5 py-3 border-2 border-slate-200 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 onKeyPress={(e) => e.key === 'Enter' && askQuestion()}
               />
               <button 
-                className="px-4 py-2 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700 transition-colors"
+                className="px-5 py-3 bg-blue-600 text-white rounded-r-xl hover:bg-blue-700 transition-colors flex items-center"
                 onClick={askQuestion}
               >
-                Ask Question
+                <span className="mr-2">📨</span> Ask
               </button>
             </div>
             
-            <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+            <div className="space-y-4 max-h-96 overflow-y-auto pr-2 py-2">
               {questions.length > 0 ? (
                 questions.map((q) => (
-                  <div key={q.id} className="border border-gray-200 rounded-lg p-4">
+                  <div key={q.id} className="border border-slate-200 rounded-xl p-4 bg-slate-50">
                     <div className="flex items-start">
-                      <div className="bg-blue-100 p-2 rounded-full mr-3">
-                        <span className="material-icons text-blue-600">person</span>
+                      <div className="bg-blue-100 p-2 rounded-full mr-3 flex-shrink-0">
+                        <span className="text-blue-600">👤</span>
                       </div>
                       <div className="flex-1">
-                        <p className="text-gray-800 font-medium">You: {q.text}</p>
-                        <div className="mt-2 p-3 bg-gray-100 rounded-lg">
+                        <div className="flex justify-between items-center mb-1">
+                          <p className="text-slate-800 font-medium">You</p>
+                          <span className="text-xs text-slate-500">{q.timestamp}</span>
+                        </div>
+                        <p className="text-slate-700 bg-white p-3 rounded-lg">{q.text}</p>
+                        <div className="mt-3 p-3 bg-slate-100 rounded-lg">
                           <div className="flex items-center mb-2">
                             <div className="bg-red-100 p-1 rounded-full mr-2">
-                              <span className="material-icons text-red-600 text-sm">smart_toy</span>
+                              <span className="text-red-600 text-sm">🤖</span>
                             </div>
-                            <span className="text-sm font-medium text-gray-700">AI Witness ({q.style}):</span>
+                            <span className="text-sm font-medium text-slate-700">AI Witness ({q.style})</span>
                           </div>
-                          <p className="text-gray-800">{q.response}</p>
+                          <p className="text-slate-800">{q.response}</p>
                         </div>
                       </div>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <span className="material-icons text-4xl mb-2">question_answer</span>
-                  <p>No questions asked yet. Start by asking a question to the AI witness.</p>
+                <div className="text-center py-8 text-slate-500 bg-slate-100 rounded-xl">
+                  <span className="text-4xl mb-3 block">🤔</span>
+                  <p className="text-lg">No questions asked yet.</p>
+                  <p className="text-sm mt-1">Start by asking a question to the AI witness.</p>
                 </div>
               )}
             </div>
@@ -299,42 +343,49 @@ export default function Simulation() {
         
         {/* Timeline Outcomes Tab */}
         {activeTab === 'timelines' && (
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Parallel Timeline Outcomes</h3>
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-semibold text-slate-800">Parallel Timeline Outcomes</h3>
+              <div className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                {timelineOutcomes.length} Scenarios Generated
+              </div>
+            </div>
             
-            <div className="mb-6">
+            <div className="mb-8">
               <button 
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-md flex items-center"
                 onClick={simulateTimelines}
               >
-                Generate Timeline Scenarios
+                <span className="mr-2">🔮</span> Generate Timeline Scenarios
               </button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {timelineOutcomes.length > 0 ? (
                 timelineOutcomes.map((timeline, index) => (
-                  <div key={index} className="border border-gray-200 rounded-lg p-4">
-                    <h4 className="font-medium text-gray-800 mb-3">{timeline.title}</h4>
-                    <div className="mb-4">
-                      <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                        Success Probability: {timeline.successProbability}
+                  <div key={index} className="border border-slate-200 rounded-xl p-5 hover:shadow-md transition-shadow">
+                    <h4 className="font-semibold text-slate-800 mb-3 text-lg">{timeline.title}</h4>
+                    <div className="flex justify-between items-center mb-4">
+                      <span className={`inline-block px-3 py-1 bg-${timeline.color}-100 text-${timeline.color}-800 rounded-full text-xs font-medium`}>
+                        Success: {timeline.successProbability}
                       </span>
+                      <span className="text-slate-500 text-sm">{timeline.duration}</span>
                     </div>
-                    <ul className="space-y-2">
+                    <ul className="space-y-3">
                       {timeline.steps.map((step, i) => (
                         <li key={i} className="flex items-start">
-                          <span className="material-icons text-green-500 mr-2 text-sm">check_circle</span>
-                          <span className="text-gray-700 text-sm">{step}</span>
+                          <span className={`text-${timeline.color}-500 mr-2 text-sm mt-1`}>•</span>
+                          <span className="text-slate-700 text-sm">{step}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
                 ))
               ) : (
-                <div className="col-span-3 text-center py-8 text-gray-500">
-                  <span className="material-icons text-4xl mb-2">timeline</span>
-                  <p>No timeline scenarios generated yet. Click the button to explore different outcomes.</p>
+                <div className="col-span-3 text-center py-10 text-slate-500 bg-slate-100 rounded-xl">
+                  <span className="text-4xl mb-3 block">📅</span>
+                  <p className="text-lg">No timeline scenarios generated yet.</p>
+                  <p className="text-sm mt-1">Click the button to explore different case outcomes.</p>
                 </div>
               )}
             </div>
@@ -343,15 +394,22 @@ export default function Simulation() {
         
         {/* AI Feedback Tab */}
         {activeTab === 'feedback' && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">AI Jury/Bench Feedback</h3>
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-semibold text-slate-800">AI Jury/Bench Feedback</h3>
+              {feedback && (
+                <div className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                  Score: {feedback.overallScore}/100
+                </div>
+              )}
+            </div>
             
-            <div className="mb-6">
+            <div className="mb-8">
               <button 
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-md flex items-center"
                 onClick={getFeedback}
               >
-                Request Feedback
+                <span className="mr-2">📝</span> Request Feedback
               </button>
             </div>
             
@@ -361,7 +419,7 @@ export default function Simulation() {
                   <div className="relative w-40 h-40">
                     <svg className="w-full h-full" viewBox="0 0 100 100">
                       <circle
-                        className="text-gray-200 stroke-current"
+                        className="text-slate-200 stroke-current"
                         strokeWidth="10"
                         cx="50"
                         cy="50"
@@ -378,47 +436,56 @@ export default function Simulation() {
                         fill="transparent"
                         strokeDasharray="251.2"
                         strokeDashoffset={251.2 - (251.2 * feedback.overallScore) / 100}
+                        transform="rotate(-90 50 50)"
                       />
                     </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-3xl font-bold text-gray-800">{feedback.overallScore}/100</span>
+                    <div className="absolute inset-0 flex items-center justify-center flex-col">
+                      <span className="text-3xl font-bold text-slate-800">{feedback.overallScore}</span>
+                      <span className="text-sm text-slate-500">out of 100</span>
                     </div>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                   {feedback.criteria.map((criterion, index) => (
-                    <div key={index} className="border border-gray-200 rounded-lg p-4">
+                    <div key={index} className="border border-slate-200 rounded-xl p-4 hover:shadow-sm transition-shadow">
                       <div className="flex justify-between items-center mb-2">
-                        <h4 className="font-medium text-gray-800">{criterion.name}</h4>
-                        <span className="font-bold text-gray-800">{criterion.score}/100</span>
+                        <h4 className="font-medium text-slate-800">{criterion.name}</h4>
+                        <span className="font-bold text-slate-800">{criterion.score}/100</span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2.5">
+                      <div className="w-full bg-slate-200 rounded-full h-2.5 mb-1">
                         <div 
-                          className="bg-blue-600 h-2.5 rounded-full" 
+                          className="bg-blue-600 h-2.5 rounded-full transition-all duration-500" 
                           style={{ width: `${criterion.score}%` }}
                         ></div>
+                      </div>
+                      <div className="text-xs text-slate-500 mt-1">
+                        {criterion.score >= 90 ? 'Excellent' : 
+                         criterion.score >= 80 ? 'Very Good' : 
+                         criterion.score >= 70 ? 'Good' : 
+                         criterion.score >= 60 ? 'Fair' : 'Needs Improvement'}
                       </div>
                     </div>
                   ))}
                 </div>
                 
-                <div className="border-t border-gray-200 pt-6">
-                  <h4 className="font-medium text-gray-800 mb-4">Feedback Comments</h4>
+                <div className="border-t border-slate-200 pt-6">
+                  <h4 className="font-medium text-slate-800 mb-4 text-lg">Feedback Comments</h4>
                   <ul className="space-y-3">
                     {feedback.comments.map((comment, index) => (
-                      <li key={index} className="flex items-start">
-                        <span className="material-icons text-blue-500 mr-2 text-sm">feedback</span>
-                        <span className="text-gray-700">{comment}</span>
+                      <li key={index} className="flex items-start p-3 bg-blue-50 rounded-lg">
+                        <span className="text-blue-500 mr-2 text-lg mt-0.5">💡</span>
+                        <span className="text-slate-700">{comment}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500">
-                <span className="material-icons text-4xl mb-2">psychology</span>
-                <p>No feedback yet. Click the button to get AI evaluation of your performance.</p>
+              <div className="text-center py-10 text-slate-500 bg-slate-100 rounded-xl">
+                <span className="text-4xl mb-3 block">📊</span>
+                <p className="text-lg">No feedback yet.</p>
+                <p className="text-sm mt-1">Click the button to get AI evaluation of your performance.</p>
               </div>
             )}
           </div>

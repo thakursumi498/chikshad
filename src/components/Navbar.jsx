@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = ({ userData, sidebarCollapsed, setSidebarCollapsed }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -9,6 +10,7 @@ const Navbar = ({ userData, sidebarCollapsed, setSidebarCollapsed }) => {
   const searchRef = useRef(null);
   const notificationsRef = useRef(null);
   const profileRef = useRef(null);
+  const navigate = useNavigate();
 
   const notifications = [
     { id: 1, text: 'Hearing reminder for Case #C-2023-4582', time: '10 mins ago', read: false },
@@ -154,6 +156,21 @@ const Navbar = ({ userData, sidebarCollapsed, setSidebarCollapsed }) => {
     setSearchOpen(false);
   };
 
+  // Handle navigation to different pages
+  const handleNavigation = (path) => {
+    setProfileOpen(false);
+    navigate(path);
+  };
+
+  // Handle sign out
+  const handleSignOut = () => {
+    setProfileOpen(false);
+    // Add your sign out logic here
+    console.log('User signed out');
+    // Example: authService.signOut();
+    navigate('/login');
+  };
+
   return (
     <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm flex justify-between items-center">
       {/* Left side - Menu toggle */}
@@ -169,7 +186,7 @@ const Navbar = ({ userData, sidebarCollapsed, setSidebarCollapsed }) => {
         </button>
         
         {/* Logo/Brand */}
-        <div className="hidden md:flex items-center">
+        <div className="hidden md:flex items-center cursor-pointer" onClick={() => navigate('/dashboard')}>
           <span className="text-xl font-semibold text-gray-800">LegalSuite</span>
           <span className="mx-2 text-gray-400">|</span>
           <span className="text-sm text-gray-500">Dashboard</span>
@@ -261,7 +278,10 @@ const Navbar = ({ userData, sidebarCollapsed, setSidebarCollapsed }) => {
       {/* Right side items */}
       <div className="flex items-center space-x-3">
         {/* Apps button */}
-        <button className="p-2 rounded-full text-gray-500 hover:bg-gray-100 transition-colors duration-200 relative">
+        <button 
+          className="p-2 rounded-full text-gray-500 hover:bg-gray-100 transition-colors duration-200 relative"
+          onClick={() => navigate('/apps')}
+        >
           <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
           </svg>
@@ -311,7 +331,10 @@ const Navbar = ({ userData, sidebarCollapsed, setSidebarCollapsed }) => {
                 )}
               </div>
               <div className="p-2 border-t border-gray-200 bg-gray-50 text-center">
-                <button className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors duration-200">
+                <button 
+                  className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors duration-200"
+                  onClick={() => navigate('/notifications')}
+                >
                   View all notifications
                 </button>
               </div>
@@ -329,7 +352,7 @@ const Navbar = ({ userData, sidebarCollapsed, setSidebarCollapsed }) => {
               {userData ? userData.name.charAt(0) : 'U'}
             </div>
             <div className="hidden md:block text-left">
-              <p className="text-sm font-medium text-gray-700">{userData ? userData.name : 'User'}</p>
+              <p className="text-sm font-medium text-gray-700">{userData ? userData.name : 'Sarah Johnson'}</p>
               <p className="text-xs text-gray-500">{userData ? userData.role : 'Advocate'}</p>
             </div>
             <svg className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${profileOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -340,29 +363,38 @@ const Navbar = ({ userData, sidebarCollapsed, setSidebarCollapsed }) => {
           {profileOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200 animate-fadeIn">
               <div className="px-4 py-2 border-b border-gray-100">
-                <p className="text-sm font-medium text-gray-800">{userData ? userData.name : 'User'}</p>
-                <p className="text-xs text-gray-500 truncate">{userData ? userData.email : 'user@example.com'}</p>
+                <p className="text-sm font-medium text-gray-800">Sarah Johnson</p>
+                <p className="text-xs text-gray-500 truncate">sarah.johnson@example.com</p>
               </div>
-              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150 flex items-center">
+              <button 
+                onClick={() => handleNavigation('/profile')}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150 flex items-center"
+              >
                 <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
                 Profile
-              </a>
-              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150 flex items-center">
+              </button>
+              <button 
+                onClick={() => handleNavigation('/settings')}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150 flex items-center"
+              >
                 <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 Settings
-              </a>
+              </button>
               <div className="border-t border-gray-100"></div>
-              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150 flex items-center">
+              <button 
+                onClick={handleSignOut}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150 flex items-center"
+              >
                 <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
                 Sign out
-              </a>
+              </button>
             </div>
           )}
         </div>
