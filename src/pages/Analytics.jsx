@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Bar, Doughnut, Line } from 'react-chartjs-2';
+import React, { useState, useMemo, useCallback } from 'react';
+import { Bar, Doughnut, Line, Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -30,31 +30,53 @@ ChartJS.register(
 
 const AnalyticsDashboard = () => {
   // Sample data for demonstration
-  const [caseData] = useState([
-    { id: 1, name: 'Smith v. Jones', progress: 65, risk: 'Medium', successProbability: 72, stages: 5, completedStages: 3, delays: 2, value: 125000 },
-    { id: 2, name: 'Williams v. Anderson Corp', progress: 30, risk: 'High', successProbability: 35, stages: 7, completedStages: 2, delays: 4, value: 450000 },
-    { id: 3, name: 'State v. Peterson', progress: 85, risk: 'Low', successProbability: 88, stages: 4, completedStages: 3, delays: 0, value: 75000 },
-    { id: 4, name: 'Johnson Estate Planning', progress: 45, risk: 'Medium', successProbability: 60, stages: 6, completedStages: 3, delays: 3, value: 95000 },
-    { id: 5, name: 'Davis Contract Dispute', progress: 90, risk: 'Low', successProbability: 92, stages: 5, completedStages: 4, delays: 1, value: 150000 }
+  const [caseData, setCaseData] = useState([
+    { id: 1, name: 'Smith v. Jones', progress: 65, risk: 'Medium', successProbability: 72, stages: 5, completedStages: 3, delays: 2, value: 125000, status: 'Active', category: 'Civil Litigation', openedDate: '2023-01-15', lastUpdate: '2023-10-20' },
+    { id: 2, name: 'Williams v. Anderson Corp', progress: 30, risk: 'High', successProbability: 35, stages: 7, completedStages: 2, delays: 4, value: 450000, status: 'Active', category: 'Corporate Law', openedDate: '2023-03-10', lastUpdate: '2023-10-18' },
+    { id: 3, name: 'State v. Peterson', progress: 85, risk: 'Low', successProbability: 88, stages: 4, completedStages: 3, delays: 0, value: 75000, status: 'Active', category: 'Criminal Defense', openedDate: '2023-05-22', lastUpdate: '2023-10-22' },
+    { id: 4, name: 'Johnson Estate Planning', progress: 45, risk: 'Medium', successProbability: 60, stages: 6, completedStages: 3, delays: 3, value: 95000, status: 'Pending', category: 'Estate Planning', openedDate: '2023-02-28', lastUpdate: '2023-10-15' },
+    { id: 5, name: 'Davis Contract Dispute', progress: 90, risk: 'Low', successProbability: 92, stages: 5, completedStages: 4, delays: 1, value: 150000, status: 'Active', category: 'Contract Law', openedDate: '2023-04-05', lastUpdate: '2023-10-21' },
+    { id: 6, name: 'Thompson IP Case', progress: 70, risk: 'Medium', successProbability: 78, stages: 8, completedStages: 5, delays: 2, value: 275000, status: 'Active', category: 'Intellectual Property', openedDate: '2023-06-12', lastUpdate: '2023-10-19' },
+    { id: 7, name: 'Miller Bankruptcy', progress: 95, risk: 'Low', successProbability: 85, stages: 4, completedStages: 4, delays: 0, value: 50000, status: 'Completed', category: 'Bankruptcy', openedDate: '2023-01-08', lastUpdate: '2023-09-30' }
   ]);
+
+  // State for filters
+  const [filters, setFilters] = useState({
+    riskLevel: 'All',
+    status: 'All',
+    category: 'All',
+    searchQuery: ''
+  });
+
+  // Filter cases based on filter criteria
+  const filteredCases = useMemo(() => {
+    return caseData.filter(caseItem => {
+      return (
+        (filters.riskLevel === 'All' || caseItem.risk === filters.riskLevel) &&
+        (filters.status === 'All' || caseItem.status === filters.status) &&
+        (filters.category === 'All' || caseItem.category === filters.category) &&
+        (caseItem.name.toLowerCase().includes(filters.searchQuery.toLowerCase()))
+      );
+    });
+  }, [caseData, filters]);
 
   // Data for charts
   const riskData = {
-    labels: caseData.map(caseItem => caseItem.name),
+    labels: filteredCases.map(caseItem => caseItem.name),
     datasets: [
       {
         label: 'Risk Score',
-        data: caseData.map(caseItem => {
+        data: filteredCases.map(caseItem => {
           if (caseItem.risk === 'Low') return 25;
           if (caseItem.risk === 'Medium') return 50;
           return 75;
         }),
-        backgroundColor: caseData.map(caseItem => {
+        backgroundColor: filteredCases.map(caseItem => {
           if (caseItem.risk === 'Low') return 'rgba(76, 175, 80, 0.7)';
           if (caseItem.risk === 'Medium') return 'rgba(255, 152, 0, 0.7)';
           return 'rgba(244, 67, 54, 0.7)';
         }),
-        borderColor: caseData.map(caseItem => {
+        borderColor: filteredCases.map(caseItem => {
           if (caseItem.risk === 'Low') return 'rgba(76, 175, 80, 1)';
           if (caseItem.risk === 'Medium') return 'rgba(255, 152, 0, 1)';
           return 'rgba(244, 67, 54, 1)';
@@ -66,11 +88,11 @@ const AnalyticsDashboard = () => {
   };
 
   const progressData = {
-    labels: caseData.map(caseItem => caseItem.name),
+    labels: filteredCases.map(caseItem => caseItem.name),
     datasets: [
       {
         label: 'Progress (%)',
-        data: caseData.map(caseItem => caseItem.progress),
+        data: filteredCases.map(caseItem => caseItem.progress),
         backgroundColor: 'rgba(33, 150, 243, 0.7)',
         borderColor: 'rgba(33, 150, 243, 1)',
         borderWidth: 1,
@@ -80,11 +102,11 @@ const AnalyticsDashboard = () => {
   };
 
   const successData = {
-    labels: caseData.map(caseItem => caseItem.name),
+    labels: filteredCases.map(caseItem => caseItem.name),
     datasets: [
       {
         label: 'Success Probability (%)',
-        data: caseData.map(caseItem => caseItem.successProbability),
+        data: filteredCases.map(caseItem => caseItem.successProbability),
         backgroundColor: 'rgba(0, 150, 136, 0.2)',
         borderColor: 'rgba(0, 150, 136, 1)',
         borderWidth: 2,
@@ -99,11 +121,11 @@ const AnalyticsDashboard = () => {
   };
 
   const stageCompletionData = {
-    labels: caseData.map(caseItem => caseItem.name),
+    labels: filteredCases.map(caseItem => caseItem.name),
     datasets: [
       {
         label: 'Completed Stages',
-        data: caseData.map(caseItem => caseItem.completedStages),
+        data: filteredCases.map(caseItem => caseItem.completedStages),
         backgroundColor: 'rgba(103, 58, 183, 0.7)',
         borderColor: 'rgba(103, 58, 183, 1)',
         borderWidth: 1,
@@ -111,7 +133,7 @@ const AnalyticsDashboard = () => {
       },
       {
         label: 'Total Stages',
-        data: caseData.map(caseItem => caseItem.stages),
+        data: filteredCases.map(caseItem => caseItem.stages),
         backgroundColor: 'rgba(158, 158, 158, 0.5)',
         borderColor: 'rgba(158, 158, 158, 1)',
         borderWidth: 1,
@@ -121,15 +143,47 @@ const AnalyticsDashboard = () => {
   };
 
   const caseValueData = {
-    labels: caseData.map(caseItem => caseItem.name),
+    labels: filteredCases.map(caseItem => caseItem.name),
     datasets: [
       {
         label: 'Case Value ($)',
-        data: caseData.map(caseItem => caseItem.value),
+        data: filteredCases.map(caseItem => caseItem.value),
         backgroundColor: 'rgba(156, 39, 176, 0.7)',
         borderColor: 'rgba(156, 39, 176, 1)',
         borderWidth: 1,
         borderRadius: 4,
+      },
+    ],
+  };
+
+  // New chart: Case distribution by category
+  const caseCategories = [...new Set(caseData.map(item => item.category))];
+  const categoryDistributionData = {
+    labels: caseCategories,
+    datasets: [
+      {
+        data: caseCategories.map(category => 
+          caseData.filter(item => item.category === category).length
+        ),
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.7)',
+          'rgba(54, 162, 235, 0.7)',
+          'rgba(255, 206, 86, 0.7)',
+          'rgba(75, 192, 192, 0.7)',
+          'rgba(153, 102, 255, 0.7)',
+          'rgba(255, 159, 64, 0.7)',
+          'rgba(199, 199, 199, 0.7)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(199, 199, 199, 1)'
+        ],
+        borderWidth: 1,
       },
     ],
   };
@@ -193,11 +247,37 @@ const AnalyticsDashboard = () => {
     }
   };
 
+  const pieChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: {
+          usePointStyle: true,
+          padding: 20,
+          font: {
+            size: 12
+          }
+        }
+      },
+    }
+  };
+
   const getRiskColor = (riskLevel) => {
     switch (riskLevel) {
       case 'Low': return 'bg-green-100 text-green-800 border-green-200';
       case 'Medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'High': return 'bg-red-100 text-red-800 border-red-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Active': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'Pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'Completed': return 'bg-green-100 text-green-800 border-green-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
@@ -218,12 +298,99 @@ const AnalyticsDashboard = () => {
     }).format(amount);
   };
 
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const handleFilterChange = (filterType, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterType]: value
+    }));
+  };
+
+  const totalCaseValue = useMemo(() => {
+    return caseData.reduce((sum, item) => sum + item.value, 0);
+  }, [caseData]);
+
+  const averageProgress = useMemo(() => {
+    return Math.round(caseData.reduce((sum, item) => sum + item.progress, 0) / caseData.length);
+  }, [caseData]);
+
+  const averageSuccessProbability = useMemo(() => {
+    return Math.round(caseData.reduce((sum, item) => sum + item.successProbability, 0) / caseData.length);
+  }, [caseData]);
+
+  const highRiskCasesCount = useMemo(() => {
+    return caseData.filter(item => item.risk === 'High').length;
+  }, [caseData]);
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Legal Case Analytics Dashboard</h1>
           <p className="text-gray-600">Track progress, risks, and success probabilities for all your cases</p>
+        </div>
+
+        {/* Filter Section */}
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-8 border border-gray-100">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Filter Cases</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Search Cases</label>
+              <input
+                type="text"
+                placeholder="Search by case name..."
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                value={filters.searchQuery}
+                onChange={(e) => handleFilterChange('searchQuery', e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Risk Level</label>
+              <select
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                value={filters.riskLevel}
+                onChange={(e) => handleFilterChange('riskLevel', e.target.value)}
+              >
+                <option value="All">All Risk Levels</option>
+                <option value="Low">Low Risk</option>
+                <option value="Medium">Medium Risk</option>
+                <option value="High">High Risk</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <select
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                value={filters.status}
+                onChange={(e) => handleFilterChange('status', e.target.value)}
+              >
+                <option value="All">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <select
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                value={filters.category}
+                onChange={(e) => handleFilterChange('category', e.target.value)}
+              >
+                <option value="All">All Categories</option>
+                {caseCategories.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
         {/* Summary Cards */}
@@ -251,9 +418,7 @@ const AnalyticsDashboard = () => {
               </div>
               <div>
                 <h3 className="text-sm font-medium text-gray-600 mb-1">Average Progress</h3>
-                <p className="text-2xl font-bold text-gray-800">
-                  {Math.round(caseData.reduce((sum, item) => sum + item.progress, 0) / caseData.length)}%
-                </p>
+                <p className="text-2xl font-bold text-gray-800">{averageProgress}%</p>
               </div>
             </div>
           </div>
@@ -267,9 +432,7 @@ const AnalyticsDashboard = () => {
               </div>
               <div>
                 <h3 className="text-sm font-medium text-gray-600 mb-1">High Risk Cases</h3>
-                <p className="text-2xl font-bold text-gray-800">
-                  {caseData.filter(item => item.risk === 'High').length}
-                </p>
+                <p className="text-2xl font-bold text-gray-800">{highRiskCasesCount}</p>
               </div>
             </div>
           </div>
@@ -283,9 +446,7 @@ const AnalyticsDashboard = () => {
               </div>
               <div>
                 <h3 className="text-sm font-medium text-gray-600 mb-1">Avg. Success Probability</h3>
-                <p className="text-2xl font-bold text-gray-800">
-                  {Math.round(caseData.reduce((sum, item) => sum + item.successProbability, 0) / caseData.length)}%
-                </p>
+                <p className="text-2xl font-bold text-gray-800">{averageSuccessProbability}%</p>
               </div>
             </div>
           </div>
@@ -315,9 +476,9 @@ const AnalyticsDashboard = () => {
           </div>
           
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Stage Completion Status</h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Case Distribution by Category</h2>
             <div className="h-80">
-              <Bar data={stageCompletionData} options={chartOptions} />
+              <Pie data={categoryDistributionData} options={pieChartOptions} />
             </div>
           </div>
         </div>
@@ -325,8 +486,15 @@ const AnalyticsDashboard = () => {
         {/* Case Details Table */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-8 border border-gray-100">
           <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-            <h2 className="text-xl font-semibold text-gray-800">Case Details</h2>
-            <p className="text-sm text-gray-600 mt-1">Detailed view of all cases with progress metrics</p>
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800">Case Details</h2>
+                <p className="text-sm text-gray-600 mt-1">Detailed view of all cases with progress metrics</p>
+              </div>
+              <div className="text-sm text-gray-600">
+                Showing {filteredCases.length} of {caseData.length} cases
+              </div>
+            </div>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -334,6 +502,12 @@ const AnalyticsDashboard = () => {
                 <tr>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Case Name
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Category
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Progress
@@ -356,10 +530,19 @@ const AnalyticsDashboard = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {caseData.map((caseItem) => (
+                {filteredCases.map((caseItem) => (
                   <tr key={caseItem.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">{caseItem.name}</div>
+                      <div className="text-xs text-gray-500">Opened: {formatDate(caseItem.openedDate)}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {caseItem.category}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getStatusColor(caseItem.status)}`}>
+                        {caseItem.status}
+                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -428,6 +611,14 @@ const AnalyticsDashboard = () => {
                     {item.name} has {item.delays} delays requiring attention
                   </li>
                 ))}
+                {caseData.filter(item => item.delays > 2).length === 0 && (
+                  <li className="text-sm text-green-600 flex items-center">
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    No cases with excessive delays
+                  </li>
+                )}
               </ul>
             </div>
             
